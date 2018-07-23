@@ -1,0 +1,23 @@
+{
+  "name": "backend-dev-test",
+  "version": "1.0.0",
+  "description": "Use **Express.js** and **Mongoose** to create a RESTful API to get and save data to MongoDB",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/institchuau/backend-dev-test.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/institchuau/backend-dev-test/issues"
+  },
+  "homepage": "https://github.com/institchuau/backend-dev-test#readme",
+  "dependencies": {
+    "express": "^4.16.3",
+    "mongoose": "^5.2.4"
+  }
+}
