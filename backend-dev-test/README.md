@@ -2,10 +2,10 @@ Implementation from Stephen
 
 # Instructions
 
--Packages used: `express` and `mongoose`
--Install packages before running files
--To run the files, enter `$node app.js`
--I used `Postman` to do the check the endpoints
+- Packages used: `express` and `mongoose`
+- Install packages before running files
+- To run the files, enter `$node app.js`
+- I used `Postman` to do the check the endpoints
 
 # Endpoints
 - `POST /users` to create new user
