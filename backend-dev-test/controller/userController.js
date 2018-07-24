@@ -1,6 +1,7 @@
 const User = require('../models/userModel.js');
 const Post = require('../models/postModel.js');
-// Create and Save a new user
+
+// Create and Save a new user.
 exports.createUser = (req, res) => {
 	if(!req.body.firstName) {
     	return res.status(400).send({
@@ -22,7 +23,7 @@ exports.createUser = (req, res) => {
     });
 };
 
-//Find an user by id
+//Find an user by id.
 exports.findOneUser = (req, res) => {
     User.findById(req.params.userId)
     .then(user => {
@@ -44,6 +45,7 @@ exports.findOneUser = (req, res) => {
     });
 };
 
+//Create a new post under an user.
 exports.createPost = (req, res) => {
 	if(!req.params.userId) {
     	return res.status(400).send({
@@ -59,16 +61,42 @@ exports.createPost = (req, res) => {
     	description: req.body.description,
     	user: req.params.userId
     });
+    User.findById(req.params.userId)
+    .then(user => {
+        if(!user) {
+            return res.status(404).send({
+                message: "User not found with id " + req.params.userId
+            });            
+        }
+        user.posts.push(post._id);
+        user.save(function(err) {
+            if (err) {
+                res.status(500).send({
+                    message: err.message || "Some error occurred while creating the post"
+                }); 
+            }
+        });
+    }).catch(err => {
+        if(err.kind === 'ObjectId') {
+            return res.status(404).send({
+                message: "User not found with id " + req.params.userId
+            });                
+        }
+        return res.status(500).send({
+            message: "Error retrieving user with id " + req.params.userId
+        });
+    });
     post.save()
     .then(data => {
         res.send(data);
     }).catch(err => {
         res.status(500).send({
-            message: err.message || "Some error occurred while creating the post."
+            message: err.message || "Some error occurred while creating the post"
         });
     });
 };
 
+//Find all posts which are posted by an user.
 exports.findAllPostsById = (req, res) => {
     Post.find({user: req.params.userId})
     .then(posts => {
@@ -90,6 +118,7 @@ exports.findAllPostsById = (req, res) => {
     });
 };
 
+//Find one post which is posted by an user.
 exports.findOnePostById = (req, res) => {
 	Post.find({user: req.params.userId, _id: req.params.postId})
 	.then(posts => {
