@@ -144,12 +144,12 @@ exports.findOnePostById = (req, res) => {
 exports.findAllPosts = (req, res) => {
     var limit = 200;
     var title = '.';
-    var method1 = null;
+    var method1 = "createdAt";
     var method1_sort = 'asc';
     var method2 = null;
     var method2_sort = 'asc';
     var sort = req.params.sort;
-    if (req.params.option) {
+    if (req.params.option && req.params.option.includes("=")) {
         //Amount Limitation
         var string = req.params.option.split("=");
         var options = string[0];
