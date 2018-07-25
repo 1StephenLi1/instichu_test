@@ -1,5 +1,9 @@
 const User = require('../models/userModel.js');
 const Post = require('../models/postModel.js');
+var random_name = require('node-random-name');
+var randomBirthday = require('random-birthday');
+var randomstring = require("randomstring");
+let DateGenerator = require('random-date-generator');
 
 // Create and Save a new user.
 exports.createUser = (req, res) => {
@@ -139,3 +143,117 @@ exports.findOnePostById = (req, res) => {
         });
     });
 };
+
+//Find all posts with special conditions
+exports.findAllPosts = (req, res) => {
+    var limit = 200;
+    var title = '.';
+    var method1 = "createdAt";
+    var method1_sort = 'asc';
+    var method2 = null;
+    var method2_sort = 'asc';
+    var sort = req.params.sort;
+    if (req.params.option && req.params.option.includes("=")) {
+        //Amount Limitation
+        var string = req.params.option.split("=");
+        var options = string[0];
+        if (options === "limit") {
+            limit = parseInt(string[1]);
+        }
+        //Title matching
+        if (options === "title") {
+            title = string[1];
+        }
+        //Sorting
+        if (options === "sort") {
+            var conditions = string[1];
+
+            if (conditions.includes(",")) {
+                var con_str = conditions.split(",");
+                var con1 = con_str[0];
+                var con2 = con_str[1];
+                if (con1.includes(":")) {
+                    method1 = con1.split(":")[0];
+                    method1_sort = 'desc';
+                } else {
+                    method1 = con1;
+                }
+                if (con2.includes(":")) {
+                    method2 = con2.split(":")[0];
+                    method2_sort = 'desc';
+                } else {
+                    method2 = con2;
+                }
+            } else {
+                if (conditions.includes(":")) {
+                    method1 = conditions.split(":")[0];
+                    method1_sort = 'desc';
+                } else {
+                    method1 = conditions;
+                }
+            }
+        }
+    }
+    User.find({}, {"firstName": 1, "lastName": 1, "_id": 0})
+    .limit(limit)
+    .populate('posts',{'description':1, 'title':1, '_id':0, 'createdAt':1}, 
+        {"title": {$regex: title, $options: "$i"}}, {sort: {[method1]: method1_sort, 
+            [method2]: method2_sort}})
+    .then(posts => {
+        res.send(posts);
+    }).catch(err => {
+        if(err.kind === 'ObjectId') {
+            return res.status(404).send({
+                message: "User not found with id " + req.params.userId
+            });                
+        }
+        return res.status(500).send({
+            message: "Error retrieving user with id " + req.params.userId
+        });
+    });
+};
+
+module.exports.generateUsers = function(req, res) {
+    var number = req.params.number;
+    for (var i = 0; i < number; i++) {
+        var user = userGenerator();
+        console.log(user);
+    }
+    res.send("New users created.")
+}
+
+// Generate a random user
+function userGenerator () {
+    var firstName = random_name({ first: true});
+    var lastName = random_name({ last: true});
+    var birthday = randomBirthday();
+
+    const user = new User({
+        firstName: firstName,
+        lastName: lastName,
+        birthday: birthday
+    });
+    for (var i = 0; i < 10; i++) {
+        var title = randomstring.generate(7);
+        var description = randomstring.generate();
+        var createdAt = DateGenerator.getRandomDate();
+        const post = new Post({
+            title: title,
+            description: description,
+            user: user._id,
+            createdAt: createdAt
+        });
+        post.save(function(err){
+            if(err){
+                return err;
+            }
+        });
+        user.posts.push(post._id);    
+    }
+    user.save(function(err){
+        if(err){
+            return err;
+        }
+    });
+    return user;
+}
