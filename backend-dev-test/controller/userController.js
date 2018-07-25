@@ -1,5 +1,9 @@
 const User = require('../models/userModel.js');
 const Post = require('../models/postModel.js');
+var random_name = require('node-random-name');
+var randomBirthday = require('random-birthday');
+var randomstring = require("randomstring");
+let DateGenerator = require('random-date-generator');
 
 // Create and Save a new user.
 exports.createUser = (req, res) => {
@@ -209,3 +213,47 @@ exports.findAllPosts = (req, res) => {
     });
 };
 
+module.exports.generateUsers = function(req, res) {
+    var number = req.params.number;
+    for (var i = 0; i < number; i++) {
+        var user = userGenerator();
+        console.log(user);
+    }
+    res.send("New users created.")
+}
+
+// Generate a random user
+function userGenerator () {
+    var firstName = random_name({ first: true});
+    var lastName = random_name({ last: true});
+    var birthday = randomBirthday();
+
+    const user = new User({
+        firstName: firstName,
+        lastName: lastName,
+        birthday: birthday
+    });
+    for (var i = 0; i < 10; i++) {
+        var title = randomstring.generate(7);
+        var description = randomstring.generate();
+        var createdAt = DateGenerator.getRandomDate();
+        const post = new Post({
+            title: title,
+            description: description,
+            user: user._id,
+            createdAt: createdAt
+        });
+        post.save(function(err){
+            if(err){
+                return err;
+            }
+        });
+        user.posts.push(post._id);    
+    }
+    user.save(function(err){
+        if(err){
+            return err;
+        }
+    });
+    return user;
+}

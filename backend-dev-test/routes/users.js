@@ -7,7 +7,7 @@ module.exports = (app) => {
     // Retrieve a single User with userId
     app.get('/users/:userId', users.findOneUser);
 
-    //Create a new post
+    // Create a new post
     app.post('/users/:userId/posts', users.createPost);
 
     // Retrieve all posts by an user
@@ -18,4 +18,8 @@ module.exports = (app) => {
 
     // Retrive all posts with special conditions
     app.get('/posts/:option?', users.findAllPosts);
+
+    // Generate random users
+    app.post('/random/:number', users.generateUsers);
+    
 }
