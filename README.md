@@ -21,5 +21,5 @@ Implementation from Stephen
 - `posts/sort` -> Returns posts which are sorted by either title or time(default by ascending order). For example, `posts/sort=title:desc,createdAt:desc` 
 
 # Random users generator
-- `/random/:number` -> Creates (number) users with random names, DoB, and 10 posts of each created user.
+- `POST user/random/:number` -> Creates (number) users with random names, DoB, and 10 posts of each created user.
 - Package used to generate random data: `node-random-name`, `random-birthday`, `node-randomstring` and `random-date-generator`.
