@@ -17,6 +17,7 @@ mongoose.connect(dbConfig.url)
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(bodyParser.json());
 require('./routes/users.js')(app);
+require('./routes/posts.js')(app);
 app.get('/', (req, res) => {
     res.json({"message": "Welcome!"});
 });

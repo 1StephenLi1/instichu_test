@@ -16,10 +16,7 @@ module.exports = (app) => {
     // Retrieve one post by an user
     app.get('/users/:userId/posts/:postId', users.findOnePostById);
 
-    // Retrive all posts with special conditions
-    app.get('/posts/:option?', users.findAllPosts);
-
     // Generate random users
-    app.post('/random/:number', users.generateUsers);
+    app.post('/users/random/:number', users.generateUsers);
     
 }
